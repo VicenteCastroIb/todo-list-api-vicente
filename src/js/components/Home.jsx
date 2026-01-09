@@ -1,140 +1,126 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const TodoList = () => {
     const [tasks, setTasks] = useState([]);
     const [inputValue, setInputValue] = useState("");
-    const username = "vicente"; 
     const baseUrl = "https://playground.4geeks.com/todo";
+    const userName = "Vicente";
 
     useEffect(() => {
         getTasks();
     }, []);
 
-
     const getTasks = () => {
-        fetch(`${baseUrl}/users/${username}`)
+        fetch(`${baseUrl}/users/${userName}`)
             .then((resp) => {
-                if (resp.status === 404) {
-                    return createUser();
-                }
+                if (resp.status === 404) return createUser();
                 if (!resp.ok) throw Error("Error al obtener tareas");
                 return resp.json();
             })
             .then((data) => {
-                if (data && data.todos) {
-                    setTasks(data.todos);
-                }
+                if (data && data.todos) setTasks(data.todos);
             })
             .catch((error) => console.error(error));
     };
 
-
     const createUser = () => {
-        fetch(`${baseUrl}/users/${username}`, {
+        fetch(`${baseUrl}/users/${userName}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" }
         })
-            .then((resp) => {
-                if (resp.ok) getTasks();
-            })
-            .catch((error) => console.error("Error creando usuario:", error));
+            .then((resp) => { if (resp.ok) getTasks(); })
+            .catch((error) => console.error("Error al crear usuario ", error));
     };
-
 
     const addTask = (e) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
-            const newTask = {
-                label: inputValue.trim(),
-                is_done: false
-            };
-
-            fetch(`${baseUrl}/todos/${username}`, {
+            const newTask = { label: inputValue.trim(), is_done: false };
+            fetch(`${baseUrl}/todos/${userName}`, {
                 method: "POST",
                 body: JSON.stringify(newTask),
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" }
             })
                 .then((resp) => resp.json())
                 .then((data) => {
                     setTasks([...tasks, data]);
                     setInputValue("");
                 })
-                .catch((error) => console.error("Error al agregar:", error));
+                .catch((error) => console.error("Error al agregar tarea: ", error));
         }
     };
 
-
     const deleteTask = (id) => {
-        fetch(`${baseUrl}/todos/${id}`, {
-            method: "DELETE",
-        })
+        fetch(`${baseUrl}/todos/${id}`, { method: "DELETE" })
             .then((resp) => {
                 if (resp.ok) {
-                    setTasks(tasks.filter((t) => t.id !== id));
+                    setTasks(tasks.filter((task) => task.id !== id));
                 }
             })
-            .catch((error) => console.error("Error al borrar:", error));
+            .catch((error) => console.error("Error al borrar tarea:", error));
     };
 
-
-    const clearAllTasks = () => {
-        fetch(`${baseUrl}/users/${username}`, {
-            method: "DELETE",
-        })
+    const deleteAllTask = () => {
+        fetch(`${baseUrl}/users/${userName}`, { method: "DELETE" })
             .then((resp) => {
                 if (resp.ok) {
                     setTasks([]);
                     createUser();
                 }
             })
-            .catch((error) => console.error("Error al limpiar todo:", error));
+            .catch((error) => console.error("Error al borrar tareas:", error));
     };
 
     return (
         <div className="container">
-            <h1 className="text-center mt-5">Lista Tareas</h1>
-
-            <div className="todo-box shadow">
+            <h1 className="mb-4 text-center">To-do List</h1>
+            <div className="input-group mb-4">
                 <input
                     type="text"
-                    className="form-control"
-                    placeholder="¿Qué necesitas hacer?"
+                    className="inputuno form-control mx-5 py-2"
+                    placeholder="Ingresa una tarea!"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={addTask}
                 />
-
-                <ul className="list-group">
-                    {tasks.length === 0 ? (
-                        <li className="list-group-item text-muted">
-                            No hay tareas, añadir tareas
-                        </li>
-                    ) : (
-                        tasks.map((item) => (
-                            <li key={item.id} className="list-group-item task">
-                                <span className="task-text">{item.label}</span>
-                                <span
-                                    className="borrar"
-                                    onClick={() => deleteTask(item.id)}
-                                >
-                                    ❌
-                                </span>
-                            </li>
-                        ))
-                    )}
-                </ul>
-
-                <div className="pendientes d-flex justify-content-between align-items-center">
-                    <span>{tasks.length} {tasks.length === 1 ? "tarea" : "tareas"} pendientes</span>
-
-                    {tasks.length > 0 && (
-                        <button
-                            className="btn btn-danger btn-sm"
-                            onClick={clearAllTasks}
+            </div>
+            {/* Lista de tareas */}
+            {tasks.length > 0 && (
+                <ul className="list-group lista mx-5 shadow">
+                    {tasks.map((task) => (
+                        <li
+                            key={task.id}
+                            className="list-group-item d-flex justify-content-between align-items-center task-item"
                         >
-                            Limpiar todo
-                        </button>
-                    )}
-                </div>
+                            <span>{task.label}</span>
+                            <span
+                                className="delete-icon"
+                                onClick={() => deleteTask(task.id)}
+                            >
+                                <FontAwesomeIcon icon={faXmark} />
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {/* Nueva sección: Contador y Botón al mismo nivel */}
+            <div className="d-flex justify-content-between align-items-center mx-5 mt-2">
+                <small className="text-white-50 mb-3 ms-2">
+                    {tasks.length === 0
+                        ? "No hay tareas pendientes"
+                        : `${tasks.length} ${tasks.length === 1 ? "tarea restante" : "tareas restantes"}`
+                    }
+                </small>
+
+                <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={deleteAllTask}
+                >
+                    Eliminar Todo
+                </button>
             </div>
         </div>
     );

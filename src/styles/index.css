@@ -1,58 +1,43 @@
 body {
-    background-color: rgb(54, 54, 54);
-    color: white;
-}
-
-.container {
-    max-width: 600px;
-    margin-top: 50px;
+    background-color: rgb(36, 36, 36);
 }
 
 h1 {
-    color: white;
-    font-size: 50px;
+    color: aliceblue;
     font-weight: 200;
+    font-size: 60px;
+    margin-top: 50px;
 }
 
-.todo-box {
-    background-color: white;
-    border-radius: 4px;
+input {
+    border-radius: 5px !important;
+}
+li{
+    border-radius: 5px !important;
+    margin-bottom: 3px;
 }
 
-input.form-control {
-    border: none;
-    border-bottom: 1px solid #ddd;
-    padding: 15px 25px;
+.inputuno::placeholder {
     font-size: 20px;
-    border-radius: 0;
 }
 
-.task {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 25px !important;
-    color: #444 !important;
+.lista {
+    border-radius: 0%;
 }
 
-.borrar {
-    display: none;
+.delete-icon {
+    color: red;
     cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    padding: 0 10px;
 }
 
-.task:hover .borrar {
-    display: inline-block;
+.task-item:hover .delete-icon {
+    opacity: 1;
 }
 
-.pendientes {
-    background-color: white;
-    color: #888;
-    padding: 10px 15px;
-    font-size: 13px;
-    border-top: 1px solid #eee;
-}
-
-.btn-danger {
-    font-size: 11px;
-    padding: 2px 10px;
+.delete-icon:hover {
+    color: darkred;
+    transform: scale(1.2);
 }
