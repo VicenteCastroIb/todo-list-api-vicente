@@ -85,7 +85,6 @@ const TodoList = () => {
                     onKeyDown={addTask}
                 />
             </div>
-            {/* Lista de tareas */}
             {tasks.length > 0 && (
                 <ul className="list-group lista mx-5 shadow">
                     {tasks.map((task) => (
@@ -105,7 +104,6 @@ const TodoList = () => {
                 </ul>
             )}
 
-            {/* Nueva sección: Contador y Botón al mismo nivel */}
             <div className="d-flex justify-content-between align-items-center mx-5 mt-2">
                 <small className="text-white-50 mb-3 ms-2">
                     {tasks.length === 0
